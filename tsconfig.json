@@ -12,12 +12,13 @@
     "skipLibCheck": true,
 
     // Path alias setup
-    "baseUrl": "src",
+    "baseUrl": "./src",
     "paths": {
+      "@db/*": ["db/*"],
       "@utils/*": ["utils/*"],
-      "@config/*": ["config/*"]
-    },
-    "ignoreDeprecations": "6.0"
+      "@config/*": ["config/*"],
+      "@constants/*": ["constants/*"]
+    }
   },
   "include": ["src", "src/server.ts"],
   "exclude": ["node_modules","dist"]
