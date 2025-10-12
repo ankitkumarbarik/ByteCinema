@@ -20,6 +20,7 @@
     "start": "node dist/server.js"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
@@ -30,6 +31,7 @@
     "pino-pretty": "^13.1.2"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.9",
     "@types/express": "^5.0.3",
     "@types/mongoose": "^5.11.96",
