@@ -4,6 +4,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import { fileSize } from "@constants/index";
 import { logger } from "@utils/logger";
+import errorMiddleware from "@middlewares/error.middleware";
 
 const app: Application = express();
 
@@ -24,5 +25,6 @@ app.get("/", (req: Request, res: Response) => {
 // routes define
 
 // global error handler - one last middleware
+app.use(errorMiddleware);
 
 export default app;
