@@ -12,7 +12,7 @@ interface JwtPayload {
 }
 
 const verifyAuthentication = asyncHandler(
-    async (req: Request, res: Response, next: NextFunction) => {
+    async (req: Request, _res: Response, next: NextFunction) => {
         const token =
             req.cookies?.accessToken ||
             req.header("Authorization")?.replace("Bearer ", "").trim();

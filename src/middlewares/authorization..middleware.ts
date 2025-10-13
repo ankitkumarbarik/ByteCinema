@@ -3,7 +3,7 @@ import ApiError from "@utils/ApiError";
 
 const verifyAuthorization =
     (...allowedRoles: string[]) =>
-    (req: Request, res: Response, next: NextFunction) => {
+    (req: Request, _res: Response, next: NextFunction) => {
         if (!req.user) throw new ApiError(401, "unauthorized: no user found");
 
         if (!allowedRoles.includes(req.user.role || ""))
