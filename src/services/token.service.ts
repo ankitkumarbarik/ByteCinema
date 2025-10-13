@@ -1,3 +1,4 @@
+import { config } from "@config/env.config";
 import jwt, { SignOptions } from "jsonwebtoken";
 import User, { IUser } from "@models/user.model";
 import ApiError from "@utils/ApiError";
@@ -10,7 +11,7 @@ interface AccessTokenPayload {
 }
 
 export const generateAccessToken = (user: IUser): string => {
-    if (!process.env.ACCESS_TOKEN_SECRET || !process.env.ACCESS_TOKEN_EXPIRY) {
+    if (!config.ACCESS_TOKEN_SECRET || !config.ACCESS_TOKEN_EXPIRY) {
         throw new ApiError(
             500,
             "access_token secret or expiry missing in environment"
@@ -24,19 +25,16 @@ export const generateAccessToken = (user: IUser): string => {
     };
 
     const options: SignOptions = {
-        expiresIn: process.env.ACCESS_TOKEN_EXPIRY as SignOptions["expiresIn"],
+        expiresIn: config.ACCESS_TOKEN_EXPIRY as SignOptions["expiresIn"],
     };
 
-    return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, options);
+    return jwt.sign(payload, config.ACCESS_TOKEN_SECRET, options);
 };
 
 type RefreshTokenPayload = Pick<AccessTokenPayload, "_id">;
 
 export const generateRefreshToken = (user: IUser): string => {
-    if (
-        !process.env.REFRESH_TOKEN_SECRET ||
-        !process.env.REFRESH_TOKEN_EXPIRY
-    ) {
+    if (!config.REFRESH_TOKEN_SECRET || !config.REFRESH_TOKEN_EXPIRY) {
         throw new ApiError(
             500,
             "refresh_token secret or expiry missing in environment"
@@ -48,10 +46,10 @@ export const generateRefreshToken = (user: IUser): string => {
     };
 
     const options: SignOptions = {
-        expiresIn: process.env.REFRESH_TOKEN_EXPIRY as SignOptions["expiresIn"],
+        expiresIn: config.REFRESH_TOKEN_EXPIRY as SignOptions["expiresIn"],
     };
 
-    return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, options);
+    return jwt.sign(payload, config.REFRESH_TOKEN_SECRET, options);
 };
 
 interface TokenResponse {

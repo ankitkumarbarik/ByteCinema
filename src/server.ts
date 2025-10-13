@@ -1,3 +1,4 @@
+import { config } from "@config/env.config";
 import dotenv from "dotenv";
 import connectDB from "@db/index";
 import app from "./app";
@@ -5,7 +6,7 @@ import { logger } from "@utils/logger";
 
 dotenv.config({ path: "./.env" });
 
-const PORT = Number(process.env.PORT) || 5000;
+const PORT = Number(config.PORT) || 5000;
 
 (async () => {
     try {

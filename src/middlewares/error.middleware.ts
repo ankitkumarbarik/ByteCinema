@@ -1,3 +1,4 @@
+import { config } from "@config/env.config";
 import { Request, Response, NextFunction } from "express";
 import ApiError from "@utils/ApiError";
 import { logger } from "@utils/logger";
@@ -47,7 +48,7 @@ const errorMiddleware = (
     }
 
     // Log error for debugging (only in dev)
-    if (process.env.NODE_ENV !== "production") {
+    if (config.NODE_ENV !== "production") {
         logger.error(`[ERROR] ${err.stack || message}`);
     }
 
@@ -57,7 +58,7 @@ const errorMiddleware = (
         error: {
             message,
             type: err.name || "Error",
-            ...(process.env.NODE_ENV !== "production" && { stack: err.stack }),
+            ...(config.NODE_ENV !== "production" && { stack: err.stack }),
         },
     });
 };

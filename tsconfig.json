@@ -19,8 +19,10 @@
       "@constants/*": ["./src/constants/*"],
       "@middlewares/*": ["./src/middlewares/*"],
       "@models/*": ["./src/models/*"],
-      "@services/*": ["./src/services/*"],
-    }
+      "@services/*": ["./src/services/*"]
+    },
+    // typeRoots setup to resolve types in node_modules folder as well as in src folder
+    "typeRoots": ["./src/types", "./node_modules/@types"]
   },
   "include": ["src", "src/server.ts"],
   "exclude": ["node_modules","dist"]

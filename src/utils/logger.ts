@@ -1,11 +1,12 @@
+import { config } from "@config/env.config";
 import pino, { Logger, LoggerOptions } from "pino";
 
 // Factory to create a logger with optional context
 export const createLogger = (context?: string): Logger => {
     const options: LoggerOptions = {
-        level: process.env.NODE_ENV === "production" ? "info" : "debug",
+        level: config.NODE_ENV === "production" ? "info" : "debug",
         transport:
-            process.env.NODE_ENV === "production"
+            config.NODE_ENV === "production"
                 ? undefined
                 : {
                     target: "pino-pretty",
