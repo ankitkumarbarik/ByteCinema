@@ -1,9 +1,12 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
 
-interface IAuth extends Document {
+export interface IUser extends Document {
+    _id: string;
+    name: string;
     email: string;
     password: string;
+    avatar: string;
     authProvider:
         | "local"
         | "google"
@@ -22,8 +25,14 @@ interface IAuth extends Document {
     forgetPasswordExpiry?: Date;
 }
 
-const authSchema = new Schema<IAuth>(
+const userSchema = new Schema<IUser>(
     {
+        name: {
+            type: String,
+            required: [true, "firstname is required"],
+            trim: true,
+            index: true,
+        },
         email: {
             type: String,
             required: [true, "email is required"],
@@ -34,6 +43,9 @@ const authSchema = new Schema<IAuth>(
         password: {
             type: String,
             required: [true, "password is required"],
+        },
+        avatar: {
+            type: String,
         },
         authProvider: {
             type: String,
@@ -77,7 +89,7 @@ const authSchema = new Schema<IAuth>(
     { timestamps: true }
 );
 
-authSchema.pre("save", async function (next) {
+userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
     try {
         const salt = await bcrypt.genSalt(10);
@@ -89,12 +101,12 @@ authSchema.pre("save", async function (next) {
     }
 });
 
-authSchema.methods.comparePassword = async function (
+userSchema.methods.comparePassword = async function (
     password: string
 ): Promise<boolean> {
     return bcrypt.compare(password, this.password);
 };
 
-const Auth = model<IAuth>("Auth", authSchema);
+const User = model<IUser>("Auth", userSchema);
 
-export default Auth;
+export default User;

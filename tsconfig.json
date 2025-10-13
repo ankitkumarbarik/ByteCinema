@@ -12,13 +12,14 @@
     "skipLibCheck": true,
 
     // Path alias setup
-    "baseUrl": "./src",
     "paths": {
-      "@db/*": ["db/*"],
-      "@utils/*": ["utils/*"],
-      "@config/*": ["config/*"],
-      "@constants/*": ["constants/*"],
-      "@middlewares/*": ["middlewares/*"]
+      "@db/*": ["./src/db/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@config/*": ["./src/config/*"],
+      "@constants/*": ["./src/constants/*"],
+      "@middlewares/*": ["./src/middlewares/*"],
+      "@models/*": ["./src/models/*"],
+      "@services/*": ["./src/services/*"],
     }
   },
   "include": ["src", "src/server.ts"],
