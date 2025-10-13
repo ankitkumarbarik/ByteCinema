@@ -9,4 +9,6 @@ export const config = {
     ACCESS_TOKEN_EXPIRY: process.env.ACCESS_TOKEN_EXPIRY || "1d",
     REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || "",
     REFRESH_TOKEN_EXPIRY: process.env.REFRESH_TOKEN_EXPIRY || "10d",
+    ADMIN_EMAIL: process.env.ADMIN_EMAIL || "",
+    ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || "",
 };

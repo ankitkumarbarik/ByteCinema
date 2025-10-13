@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import connectDB from "@db/index";
 import app from "./app";
 import { logger } from "@utils/logger";
+import seedAdmin from "@seed/seedAdmin";
 
 dotenv.config({ path: "./.env" });
 
@@ -11,6 +12,7 @@ const PORT = Number(config.PORT) || 5000;
 (async () => {
     try {
         await connectDB();
+        await seedAdmin();
 
         const server = app.listen(PORT, () => {
             logger.info(`Server running on port ${PORT}`);
