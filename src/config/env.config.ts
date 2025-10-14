@@ -11,4 +11,10 @@ export const config = {
     REFRESH_TOKEN_EXPIRY: process.env.REFRESH_TOKEN_EXPIRY || "10d",
     ADMIN_EMAIL: process.env.ADMIN_EMAIL || "",
     ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || "",
+    SMTP_SERVICE: process.env.SMTP_SERVICE || "",
+    SMTP_HOST: process.env.SMTP_HOST || "",
+    SMTP_SECURE: process.env.SMTP_SECURE || "",
+    SMTP_PORT: process.env.SMTP_PORT || "",
+    SMTP_USER: process.env.SMTP_USER || "",
+    SMTP_PASS: process.env.SMTP_PASS || "",
 };
