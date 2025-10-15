@@ -6,7 +6,10 @@ export interface IUser extends Document {
     name: string;
     email: string;
     password: string;
-    avatar: string;
+    avatar?: {
+        public_id: string;
+        url: string;
+    };
     authProvider:
         | "local"
         | "google"
@@ -45,7 +48,8 @@ const userSchema = new Schema<IUser>(
             required: [true, "password is required"],
         },
         avatar: {
-            type: String,
+            public_id: { type: String },
+            url: { type: String },
         },
         authProvider: {
             type: String,

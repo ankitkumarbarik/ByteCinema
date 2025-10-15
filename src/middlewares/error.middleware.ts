@@ -4,13 +4,14 @@ import ApiError from "@utils/ApiError";
 import { logger } from "@utils/logger";
 
 const errorMiddleware = (
-    err: ApiError,
-    req: Request,
+    err: ApiError | any,
+    _req: Request,
     res: Response,
-    next: NextFunction
+    _next: NextFunction
 ) => {
     let statusCode = err.statusCode || 500;
     let message = err.message || "Internal Server Error";
+    let errors = err.errors || null;
 
     // Handle specific known error types
     switch (err.name) {
@@ -58,6 +59,8 @@ const errorMiddleware = (
         error: {
             message,
             type: err.name || "Error",
+            ...(errors && errors.length > 0 && { details: errors }),
+            ...(err.data && { data: err.data }),
             ...(config.NODE_ENV !== "production" && { stack: err.stack }),
         },
     });

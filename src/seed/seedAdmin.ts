@@ -17,6 +17,7 @@ const seedAdmin = async (): Promise<void> => {
             }
 
             const admin: Partial<IUser> = {
+                name: "Admin",
                 email: config.ADMIN_EMAIL,
                 password: config.ADMIN_PASSWORD,
                 role: ROLES.ADMIN,

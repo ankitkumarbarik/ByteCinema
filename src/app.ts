@@ -21,8 +21,10 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // routes import
+import userRouter from "@routes/user.route";
 
 // routes define
+app.use("/api/v1/users", userRouter);
 
 // global error handler - one last middleware
 app.use(errorMiddleware);
