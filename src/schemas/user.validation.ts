@@ -22,3 +22,10 @@ export const verifyOtpSignupSchema = z.object({
         .length(6, "OTP must be exactly 6 digits")
         .regex(/^\d+$/, "OTP must contain only numbers"),
 });
+
+export const resendOtpSignupSchema = z.object({
+    email: z
+        .string()
+        .nonempty({ message: "Email is required" })
+        .email({ message: "Invalid email format" }),
+});

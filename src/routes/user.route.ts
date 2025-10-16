@@ -2,9 +2,14 @@ import { Router } from "express";
 import validateRequest from "@middlewares/validate.middleware";
 import {
     registerUserSchema,
+    resendOtpSignupSchema,
     verifyOtpSignupSchema,
 } from "@schemas/user.validation";
-import { registerUser, verifyOtpSignup } from "@controllers/user.controller";
+import {
+    registerUser,
+    resendOtpSignup,
+    verifyOtpSignup,
+} from "@controllers/user.controller";
 
 const router = Router();
 
@@ -18,6 +23,12 @@ router.post(
     "/verify-signup",
     validateRequest(verifyOtpSignupSchema, "body"),
     verifyOtpSignup
+);
+
+router.post(
+    "/resend-signup",
+    validateRequest(resendOtpSignupSchema, "body"),
+    resendOtpSignup
 );
 
 export default router;
