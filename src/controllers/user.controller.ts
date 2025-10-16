@@ -10,6 +10,8 @@ import welcomeSignupMail from "@services/welcomeSignupMail.service";
 import generateAccessAndRefreshToken from "@services/token.service";
 import generateToken from "@utils/token.util";
 import tokenVerifyMail from "@services/tokenVerifyMail.service";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { config } from "@config/env.config";
 
 export const registerUser = asyncHandler(
     async (req: Request, res: Response) => {
@@ -295,6 +297,43 @@ export const resetUserPassword = asyncHandler(
                     200,
                     { email: existedUser.email },
                     "password reset successfully. You can now log in with your new password."
+                )
+            );
+    }
+);
+
+export const refreshAccessToken = asyncHandler(
+    async (req: Request, res: Response) => {
+        const token = req.cookies?.refreshToken || req.body.refreshToken;
+        if (!token) throw new ApiError(401, "unauthorized request");
+
+        const decodedToken = jwt.verify(
+            token,
+            config.REFRESH_TOKEN_SECRET
+        ) as JwtPayload;
+        if (!decodedToken) throw new ApiError(401, "unauthorized request");
+
+        const existedUser = await User.findById(decodedToken?._id);
+        if (!existedUser) throw new ApiError(401, "invalid refresh token");
+
+        if (token !== existedUser?.refreshToken)
+            throw new ApiError(401, "refresh token is expired or used");
+
+        const { accessToken, refreshToken } =
+            await generateAccessAndRefreshToken(existedUser._id);
+
+        const user = await sanitizeUser(existedUser._id);
+        if (!user) throw new ApiError(404, "user not found");
+
+        setAuthCookies(res, accessToken, refreshToken);
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    { user, accessToken, refreshToken },
+                    "access token refreshed successfully"
                 )
             );
     }

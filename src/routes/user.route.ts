@@ -12,6 +12,7 @@ import {
 import {
     forgetUserPassword,
     loginUser,
+    refreshAccessToken,
     registerUser,
     resendOtpSignup,
     resetUserPassword,
@@ -52,5 +53,7 @@ router.post(
     validateRequest(resetUserPasswordBodySchema, "body"),
     resetUserPassword
 );
+
+router.post("/refresh-token", refreshAccessToken);
 
 export default router;
