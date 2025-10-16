@@ -10,6 +10,7 @@ import {
     verifyOtpSignupSchema,
 } from "@schemas/user.validation";
 import {
+    deleteUser,
     forgetUserPassword,
     loginUser,
     logoutUser,
@@ -59,5 +60,7 @@ router.post(
 router.post("/refresh-token", refreshAccessToken);
 
 router.post("/logout", verifyAuthentication, logoutUser);
+
+router.delete("/delete", verifyAuthentication, deleteUser);
 
 export default router;

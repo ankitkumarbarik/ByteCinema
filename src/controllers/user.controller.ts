@@ -357,3 +357,14 @@ export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
         .status(200)
         .json(new ApiResponse(200, {}, "user logged out successfully"));
 });
+
+export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
+    const existedUser = await User.findByIdAndDelete(req.user?._id);
+    if (!existedUser) throw new ApiError(404, "user not found");
+
+    clearAuthCookies(res);
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, {}, "user deleted successfully"));
+});
