@@ -12,6 +12,7 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true, limit: fileSize }));
 app.use(express.json({ limit: fileSize }));
+app.use(express.static("public"));
 app.use(cookieParser());
 
 // health check

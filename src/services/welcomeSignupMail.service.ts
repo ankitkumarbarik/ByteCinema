@@ -1,24 +1,23 @@
 import { config } from "@config/env.config";
 import transporter from "@config/mail.config";
-import { promises as fs } from "fs";
-import { logger } from "@utils/logger";
 import ApiError from "@utils/ApiError";
+import { logger } from "@utils/logger";
+import { promises as fs } from "fs";
 
-const verifySignupMail = async (
+const welcomeSignupMail = async (
     name: string,
-    email: string,
-    otpSignup: string
+    email: string
 ): Promise<void> => {
     try {
         const fullName = `${name}`;
 
         const htmlContent = await fs.readFile(
-            "./src/mails/templates/verifySignupMail.html",
+            "./src/mails/templates/welcomeSignupMail.html",
             "utf-8"
         );
         const finalHtml = htmlContent
             .replace("{{fullName}}", fullName)
-            .replace("{{otpSignup}}", otpSignup);
+            .replace("{{dashboardLink}}", "http://localhost:5000/");
 
         const mailOptions = {
             from: {
@@ -26,9 +25,20 @@ const verifySignupMail = async (
                 address: config.SMTP_USER,
             },
             to: { name: fullName, address: email },
-            subject: "🔐 Verify Your Email - ByteCinema Movie Platform",
+            subject: `Welcome ${fullName}`,
             html: finalHtml,
             text: finalHtml,
+            attachments: [
+                {
+                    filename: "default.png",
+                    path: "./public/images/default.png",
+                },
+                {
+                    filename: "default.png",
+                    path: "./public/images/default.png",
+                    cid: "img1-contentid",
+                },
+            ],
         };
 
         const info = await transporter.sendMail(mailOptions);
@@ -39,4 +49,4 @@ const verifySignupMail = async (
     }
 };
 
-export default verifySignupMail;
+export default welcomeSignupMail;

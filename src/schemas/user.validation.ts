@@ -14,3 +14,11 @@ export const registerUserSchema = z.object({
         .nonempty("Password is required")
         .min(6, "Password must be at least 6 characters long"),
 });
+
+export const verifyOtpSignupSchema = z.object({
+    otpSignup: z
+        .string()
+        .nonempty("OTP is required")
+        .length(6, "OTP must be exactly 6 digits")
+        .regex(/^\d+$/, "OTP must contain only numbers"),
+});

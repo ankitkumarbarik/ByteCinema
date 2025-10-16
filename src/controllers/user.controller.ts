@@ -5,7 +5,8 @@ import ApiResponse from "@utils/ApiResponse";
 import User from "@models/user.model";
 import generateOtp from "@utils/otp.util";
 import { sanitizeUser } from "@utils/auth.util";
-import verifySignupMail from "@services/verifysignupMail.service";
+import verifySignupMail from "@services/verifySignupMail.service";
+import welcomeSignupMail from "@services/welcomeSignupMail.service";
 
 export const registerUser = asyncHandler(
     async (req: Request, res: Response) => {
@@ -47,6 +48,35 @@ export const registerUser = asyncHandler(
                     201,
                     createdUser,
                     "user registered successfully....Please verify OTP !"
+                )
+            );
+    }
+);
+
+export const verifyOtpSignup = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { otpSignup } = req.body;
+
+        const existedUser = await User.findOneAndUpdate(
+            { otpSignup, otpSignupExpiry: { $gt: new Date() } },
+            {
+                $unset: { otpSignup: 1, otpSignupExpiry: 1 },
+                $set: { isVerified: true },
+            },
+            { new: true }
+        );
+        if (!existedUser) throw new ApiError(400, "invalid or expired otp");
+
+        // NOTE: await welcomeSignupMail - we can but, i want to send the mail immediately..
+        welcomeSignupMail(existedUser.name!, existedUser.email!);
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    existedUser,
+                    "OTP verified successfully. Account activated."
                 )
             );
     }
