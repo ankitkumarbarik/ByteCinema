@@ -17,4 +17,5 @@ export const config = {
     SMTP_PORT: process.env.SMTP_PORT || "",
     SMTP_USER: process.env.SMTP_USER || "",
     SMTP_PASS: process.env.SMTP_PASS || "",
+    FRONTEND_BASE_URL: process.env.FRONTEND_BASE_URL || "http://localhost:5173",
 };

@@ -44,3 +44,35 @@ export const loginUserSchema = z.object({
         .min(6, "Password must be at least 6 characters long")
         .max(64, "Password cannot exceed 64 characters"),
 });
+
+export const forgetUserPasswordSchema = z.object({
+    email: z
+        .string()
+        .trim()
+        .nonempty("Email is required")
+        .email("Invalid email format"),
+});
+
+export const resetUserPasswordParamsSchema = z.object({
+    token: z
+        .string()
+        .nonempty("Token is required")
+        .trim()
+        .min(1, "Token cannot be empty"),
+});
+
+export const resetUserPasswordBodySchema = z
+    .object({
+        newPassword: z
+            .string()
+            .nonempty("New password is required")
+            .min(6, "Password must be at least 6 characters long"),
+        confirmPassword: z
+            .string()
+            .nonempty("Confirm password is required")
+            .min(6, "Password must be at least 6 characters long"),
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+        message: "Passwords do not match",
+        path: ["confirmPassword"],
+    });

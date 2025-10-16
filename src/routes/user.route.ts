@@ -1,15 +1,20 @@
 import { Router } from "express";
 import validateRequest from "@middlewares/validate.middleware";
 import {
+    forgetUserPasswordSchema,
     loginUserSchema,
     registerUserSchema,
     resendOtpSignupSchema,
+    resetUserPasswordBodySchema,
+    resetUserPasswordParamsSchema,
     verifyOtpSignupSchema,
 } from "@schemas/user.validation";
 import {
+    forgetUserPassword,
     loginUser,
     registerUser,
     resendOtpSignup,
+    resetUserPassword,
     verifyOtpSignup,
 } from "@controllers/user.controller";
 
@@ -34,5 +39,18 @@ router.post(
 );
 
 router.post("/login", validateRequest(loginUserSchema, "body"), loginUser);
+
+router.post(
+    "/forget-password",
+    validateRequest(forgetUserPasswordSchema, "body"),
+    forgetUserPassword
+);
+
+router.post(
+    "/reset-password/:token",
+    validateRequest(resetUserPasswordParamsSchema, "params"),
+    validateRequest(resetUserPasswordBodySchema, "body"),
+    resetUserPassword
+);
 
 export default router;

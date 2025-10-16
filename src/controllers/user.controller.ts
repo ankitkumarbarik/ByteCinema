@@ -8,6 +8,8 @@ import { sanitizeUser, setAuthCookies } from "@utils/auth.util";
 import verifySignupMail from "@services/verifySignupMail.service";
 import welcomeSignupMail from "@services/welcomeSignupMail.service";
 import generateAccessAndRefreshToken from "@services/token.service";
+import generateToken from "@utils/token.util";
+import tokenVerifyMail from "@services/tokenVerifyMail.service";
 
 export const registerUser = asyncHandler(
     async (req: Request, res: Response) => {
@@ -231,3 +233,69 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
             )
         );
 });
+
+export const forgetUserPassword = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { email } = req.body;
+
+        const token = generateToken();
+        const expiry = Date.now() + 3600000;
+
+        const existedUser = await User.findOneAndUpdate(
+            { email },
+            {
+                $set: {
+                    forgetPasswordToken: token,
+                    forgetPasswordExpiry: expiry,
+                },
+            },
+            { new: true }
+        );
+        if (!existedUser) throw new ApiError(404, "email does not exists");
+
+        tokenVerifyMail(
+            existedUser.name!,
+            existedUser.email!,
+            existedUser.forgetPasswordToken!
+        );
+
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                {
+                    email: existedUser.email,
+                    token: existedUser.forgetPasswordToken,
+                },
+                "token generated - check your email to reset your password"
+            )
+        );
+    }
+);
+
+export const resetUserPassword = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { token } = req.params;
+        const { newPassword, confirmPassword } = req.body;
+
+        const existedUser = await User.findOne({
+            forgetPasswordToken: token,
+            forgetPasswordExpiry: { $gt: new Date() },
+        });
+        if (!existedUser) throw new ApiError(404, "invalid or expired token");
+
+        existedUser.forgetPasswordToken = undefined;
+        existedUser.forgetPasswordExpiry = undefined;
+        existedUser.password = confirmPassword || newPassword;
+        await existedUser.save();
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    { email: existedUser.email },
+                    "password reset successfully. You can now log in with your new password."
+                )
+            );
+    }
+);
