@@ -4,9 +4,10 @@ import ApiError from "@utils/ApiError";
 import ApiResponse from "@utils/ApiResponse";
 import User from "@models/user.model";
 import generateOtp from "@utils/otp.util";
-import { sanitizeUser } from "@utils/auth.util";
+import { sanitizeUser, setAuthCookies } from "@utils/auth.util";
 import verifySignupMail from "@services/verifySignupMail.service";
 import welcomeSignupMail from "@services/welcomeSignupMail.service";
+import generateAccessAndRefreshToken from "@services/token.service";
 
 export const registerUser = asyncHandler(
     async (req: Request, res: Response) => {
@@ -146,3 +147,87 @@ export const resendOtpSignup = asyncHandler(
         }
     }
 );
+
+export const loginUser = asyncHandler(async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+
+    const existedUser = await User.findOne({ email });
+    if (!existedUser) throw new ApiError(404, "email doesn't exists");
+
+    const isPasswordValid = await existedUser.comparePassword(password);
+    if (!isPasswordValid) throw new ApiError(401, "invalid password");
+
+    if (!existedUser.isVerified) {
+        const isOtpExpired =
+            !existedUser.otpSignupExpiry ||
+            existedUser.otpSignupExpiry < new Date();
+        if (isOtpExpired) {
+            const otpSignup = generateOtp();
+            const otpSignupExpiry = new Date(Date.now() + 5 * 60 * 1000);
+
+            const updatedUser = await User.findByIdAndUpdate(
+                existedUser._id,
+                { $set: { otpSignup, otpSignupExpiry } },
+                { new: true }
+            );
+            if (!updatedUser)
+                throw new ApiError(
+                    500,
+                    "something went wrong while updating the user"
+                );
+
+            // NOTE: await verifySignupMail - we can but, i want to send the mail immediately..
+            verifySignupMail(
+                updatedUser.name!,
+                updatedUser.email!,
+                updatedUser.otpSignup!
+            );
+
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        200,
+                        updatedUser,
+                        "OTP resent successfully."
+                    )
+                );
+        } else {
+            // NOTE: await verifySignupMail - we can but, i want to send the mail immediately..
+            verifySignupMail(
+                existedUser.name!,
+                existedUser.email!,
+                existedUser.otpSignup!
+            );
+
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        200,
+                        existedUser,
+                        "OTP resent successfully."
+                    )
+                );
+        }
+    }
+
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+        existedUser._id
+    );
+
+    const user = await sanitizeUser(existedUser._id);
+    if (!user) throw new ApiError(404, "user not found");
+
+    setAuthCookies(res, accessToken, refreshToken);
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(
+                200,
+                { user, accessToken, refreshToken },
+                "user logged in successfully."
+            )
+        );
+});

@@ -29,3 +29,18 @@ export const resendOtpSignupSchema = z.object({
         .nonempty({ message: "Email is required" })
         .email({ message: "Invalid email format" }),
 });
+
+export const loginUserSchema = z.object({
+    email: z
+        .string()
+        .trim()
+        .nonempty("Email is required")
+        .email("Invalid email format"),
+
+    password: z
+        .string()
+        .trim()
+        .nonempty("Password is required")
+        .min(6, "Password must be at least 6 characters long")
+        .max(64, "Password cannot exceed 64 characters"),
+});

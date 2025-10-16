@@ -26,6 +26,7 @@ export interface IUser extends Document {
     isVerified: boolean;
     forgetPasswordToken?: string;
     forgetPasswordExpiry?: Date;
+    comparePassword(password: string): Promise<boolean>;
 }
 
 const userSchema = new Schema<IUser>(

@@ -10,7 +10,7 @@ interface AccessTokenPayload {
     role?: string;
 }
 
-export const generateAccessToken = (user: IUser): string => {
+const generateAccessToken = (user: IUser): string => {
     if (!config.ACCESS_TOKEN_SECRET || !config.ACCESS_TOKEN_EXPIRY) {
         throw new ApiError(
             500,
@@ -33,7 +33,7 @@ export const generateAccessToken = (user: IUser): string => {
 
 type RefreshTokenPayload = Pick<AccessTokenPayload, "_id">;
 
-export const generateRefreshToken = (user: IUser): string => {
+const generateRefreshToken = (user: IUser): string => {
     if (!config.REFRESH_TOKEN_SECRET || !config.REFRESH_TOKEN_EXPIRY) {
         throw new ApiError(
             500,

@@ -1,11 +1,13 @@
 import { Router } from "express";
 import validateRequest from "@middlewares/validate.middleware";
 import {
+    loginUserSchema,
     registerUserSchema,
     resendOtpSignupSchema,
     verifyOtpSignupSchema,
 } from "@schemas/user.validation";
 import {
+    loginUser,
     registerUser,
     resendOtpSignup,
     verifyOtpSignup,
@@ -30,5 +32,7 @@ router.post(
     validateRequest(resendOtpSignupSchema, "body"),
     resendOtpSignup
 );
+
+router.post("/login", validateRequest(loginUserSchema, "body"), loginUser);
 
 export default router;
