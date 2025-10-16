@@ -12,12 +12,14 @@ import {
 import {
     forgetUserPassword,
     loginUser,
+    logoutUser,
     refreshAccessToken,
     registerUser,
     resendOtpSignup,
     resetUserPassword,
     verifyOtpSignup,
 } from "@controllers/user.controller";
+import verifyAuthentication from "@middlewares/authentication.middleware";
 
 const router = Router();
 
@@ -55,5 +57,7 @@ router.post(
 );
 
 router.post("/refresh-token", refreshAccessToken);
+
+router.post("/logout", verifyAuthentication, logoutUser);
 
 export default router;

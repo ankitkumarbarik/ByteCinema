@@ -4,7 +4,11 @@ import ApiError from "@utils/ApiError";
 import ApiResponse from "@utils/ApiResponse";
 import User from "@models/user.model";
 import generateOtp from "@utils/otp.util";
-import { sanitizeUser, setAuthCookies } from "@utils/auth.util";
+import {
+    clearAuthCookies,
+    sanitizeUser,
+    setAuthCookies,
+} from "@utils/auth.util";
 import verifySignupMail from "@services/verifySignupMail.service";
 import welcomeSignupMail from "@services/welcomeSignupMail.service";
 import generateAccessAndRefreshToken from "@services/token.service";
@@ -338,3 +342,18 @@ export const refreshAccessToken = asyncHandler(
             );
     }
 );
+
+export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
+    const existedUser = await User.findByIdAndUpdate(
+        req.user?._id,
+        { $unset: { refreshToken: 1 } },
+        { new: true }
+    );
+    if (!existedUser) throw new ApiError(404, "user not found");
+
+    clearAuthCookies(res);
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, {}, "user logged out successfully"));
+});
