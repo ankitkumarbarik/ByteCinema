@@ -368,3 +368,22 @@ export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
         .status(200)
         .json(new ApiResponse(200, {}, "user deleted successfully"));
 });
+
+export const changeCurrentPassword = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { oldPassword, newPassword, confirmPassword } = req.body;
+
+        const existedUser = await User.findById(req.user?._id);
+        if (!existedUser) throw new ApiError(404, "user not found");
+
+        const isPasswordValid = await existedUser.comparePassword(oldPassword);
+        if (!isPasswordValid) throw new ApiError(401, "invalid old password");
+
+        existedUser.password = confirmPassword || newPassword;
+        await existedUser.save();
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, {}, "password changed successfully"));
+    }
+);

@@ -76,3 +76,25 @@ export const resetUserPasswordBodySchema = z
         message: "Passwords do not match",
         path: ["confirmPassword"],
     });
+
+export const changeCurrentPasswordSchema = z
+    .object({
+        oldPassword: z
+            .string()
+            .nonempty("oldPassword is required")
+            .min(6, "oldPassword must be at least 6 characters long"),
+
+        newPassword: z
+            .string()
+            .nonempty("newPassword is required")
+            .min(6, "newPassword must be at least 6 characters long"),
+
+        confirmPassword: z
+            .string()
+            .nonempty("confirmPassword is required")
+            .min(6, "confirmPassword must be at least 6 characters long"),
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+        message: "newPassword and confirmPassword must match",
+        path: ["confirmPassword"],
+    });

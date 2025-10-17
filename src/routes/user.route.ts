@@ -1,6 +1,7 @@
 import { Router } from "express";
 import validateRequest from "@middlewares/validate.middleware";
 import {
+    changeCurrentPasswordSchema,
     forgetUserPasswordSchema,
     loginUserSchema,
     registerUserSchema,
@@ -10,6 +11,7 @@ import {
     verifyOtpSignupSchema,
 } from "@schemas/user.validation";
 import {
+    changeCurrentPassword,
     deleteUser,
     forgetUserPassword,
     loginUser,
@@ -24,43 +26,49 @@ import verifyAuthentication from "@middlewares/authentication.middleware";
 
 const router = Router();
 
-router.post(
-    "/register",
-    validateRequest(registerUserSchema, "body"),
-    registerUser
-);
+router
+    .route("/register")
+    .post(validateRequest(registerUserSchema, "body"), registerUser);
 
-router.post(
-    "/verify-signup",
-    validateRequest(verifyOtpSignupSchema, "body"),
-    verifyOtpSignup
-);
+router
+    .route("/verify-signup")
+    .post(validateRequest(verifyOtpSignupSchema, "body"), verifyOtpSignup);
 
-router.post(
-    "/resend-signup",
-    validateRequest(resendOtpSignupSchema, "body"),
-    resendOtpSignup
-);
+router
+    .route("/resend-signup")
+    .post(validateRequest(resendOtpSignupSchema, "body"), resendOtpSignup);
 
-router.post("/login", validateRequest(loginUserSchema, "body"), loginUser);
+router
+    .route("/login")
+    .post(validateRequest(loginUserSchema, "body"), loginUser);
 
-router.post(
-    "/forget-password",
-    validateRequest(forgetUserPasswordSchema, "body"),
-    forgetUserPassword
-);
+router
+    .route("/forget-password")
+    .post(
+        validateRequest(forgetUserPasswordSchema, "body"),
+        forgetUserPassword
+    );
 
-router.post(
-    "/reset-password/:token",
-    validateRequest(resetUserPasswordParamsSchema, "params"),
-    validateRequest(resetUserPasswordBodySchema, "body"),
-    resetUserPassword
-);
+router
+    .route("/reset-password/:token")
+    .post(
+        validateRequest(resetUserPasswordParamsSchema, "params"),
+        validateRequest(resetUserPasswordBodySchema, "body"),
+        resetUserPassword
+    );
 
-router.post("/refresh-token", refreshAccessToken);
+router.route("/refresh-token").post(refreshAccessToken);
 
-router.post("/logout", verifyAuthentication, logoutUser);
+router.route("/logout").post(verifyAuthentication, logoutUser);
 
-router.delete("/delete", verifyAuthentication, deleteUser);
+router.route("/delete").delete(verifyAuthentication, deleteUser);
+
+router
+    .route("/change-password")
+    .patch(
+        verifyAuthentication,
+        validateRequest(changeCurrentPasswordSchema, "body"),
+        changeCurrentPassword
+    );
 
 export default router;
