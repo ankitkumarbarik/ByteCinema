@@ -14,6 +14,7 @@ import {
     changeCurrentPassword,
     deleteUser,
     forgetUserPassword,
+    getCurrentUser,
     loginUser,
     logoutUser,
     refreshAccessToken,
@@ -70,5 +71,7 @@ router
         validateRequest(changeCurrentPasswordSchema, "body"),
         changeCurrentPassword
     );
+
+router.route("/current-user").get(verifyAuthentication, getCurrentUser);
 
 export default router;

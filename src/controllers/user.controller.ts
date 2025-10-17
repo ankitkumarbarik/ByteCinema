@@ -387,3 +387,16 @@ export const changeCurrentPassword = asyncHandler(
             .json(new ApiResponse(200, {}, "password changed successfully"));
     }
 );
+
+export const getCurrentUser = asyncHandler(
+    async (req: Request, res: Response) => {
+        if (!req.user) throw new ApiError(401, "unauthorized request");
+
+        const user = await sanitizeUser(req.user._id);
+        if (!user) throw new ApiError(404, "user not found");
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, user, "user found successfully"));
+    }
+);
