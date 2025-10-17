@@ -16,6 +16,11 @@ import generateToken from "@utils/token.util";
 import tokenVerifyMail from "@services/tokenVerifyMail.service";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { config } from "@config/env.config";
+import {
+    deleteFromCloudinary,
+    uploadOnCloudinary,
+} from "@services/cloudinary.service";
+import { logger } from "@utils/logger";
 
 export const registerUser = asyncHandler(
     async (req: Request, res: Response) => {
@@ -359,14 +364,36 @@ export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
-    const existedUser = await User.findByIdAndDelete(req.user?._id);
-    if (!existedUser) throw new ApiError(404, "user not found");
+    const userId = req.user?._id;
+    if (!userId) throw new ApiError(401, "Unauthorized");
+
+    const existedUser = await User.findById(userId);
+    if (!existedUser) throw new ApiError(404, "User not found");
+
+    if (existedUser.avatar?.public_id) {
+        try {
+            await deleteFromCloudinary(existedUser.avatar.public_id);
+            logger.info(
+                `Deleted avatar from Cloudinary: ${existedUser.avatar.public_id}`
+            );
+        } catch (error) {
+            logger.error(`Error deleting avatar from Cloudinary: ${error}`);
+        }
+    }
+
+    await existedUser.deleteOne();
 
     clearAuthCookies(res);
 
     return res
         .status(200)
-        .json(new ApiResponse(200, {}, "user deleted successfully"));
+        .json(
+            new ApiResponse(
+                200,
+                {},
+                "user deleted successfully and avatar removed"
+            )
+        );
 });
 
 export const changeCurrentPassword = asyncHandler(
@@ -398,5 +425,50 @@ export const getCurrentUser = asyncHandler(
         return res
             .status(200)
             .json(new ApiResponse(200, user, "user found successfully"));
+    }
+);
+
+export const updateAccountDetails = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { name, avatarUrl } = req.body;
+        const avatarFile = req.file;
+
+        const userId = req.user?._id;
+        if (!userId) throw new ApiError(401, "Unauthorized");
+
+        const existedUser = await User.findById(userId);
+        if (!existedUser) throw new ApiError(404, "User not found");
+
+        if (name) existedUser.name = name;
+
+        if (avatarFile || avatarUrl) {
+            if (existedUser.avatar?.public_id) {
+                await deleteFromCloudinary(existedUser.avatar.public_id);
+                logger.info(
+                    `Old Cloudinary avatar deleted: ${existedUser.avatar.public_id}`
+                );
+            }
+
+            if (avatarFile) {
+                const result: any = await uploadOnCloudinary(avatarFile.buffer);
+                if (!result) throw new ApiError(500, "Failed to upload avatar");
+                existedUser.avatar = {
+                    public_id: result.public_id,
+                    url: result.secure_url,
+                };
+            } else if (avatarUrl) {
+                existedUser.avatar = {
+                    public_id: "",
+                    url: avatarUrl,
+                };
+            }
+        }
+
+        await existedUser.save();
+        const user = await sanitizeUser(userId);
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, user, "account updated successfully"));
     }
 );

@@ -8,6 +8,7 @@ import {
     resendOtpSignupSchema,
     resetUserPasswordBodySchema,
     resetUserPasswordParamsSchema,
+    updateAccountDetailsSchema,
     verifyOtpSignupSchema,
 } from "@schemas/user.validation";
 import {
@@ -21,9 +22,11 @@ import {
     registerUser,
     resendOtpSignup,
     resetUserPassword,
+    updateAccountDetails,
     verifyOtpSignup,
 } from "@controllers/user.controller";
 import verifyAuthentication from "@middlewares/authentication.middleware";
+import upload from "@middlewares/multer.middleware";
 
 const router = Router();
 
@@ -73,5 +76,14 @@ router
     );
 
 router.route("/current-user").get(verifyAuthentication, getCurrentUser);
+
+router
+    .route("/update-account")
+    .patch(
+        verifyAuthentication,
+        upload.single("avatar"),
+        validateRequest(updateAccountDetailsSchema, "body"),
+        updateAccountDetails
+    );
 
 export default router;

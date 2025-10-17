@@ -98,3 +98,23 @@ export const changeCurrentPasswordSchema = z
         message: "newPassword and confirmPassword must match",
         path: ["confirmPassword"],
     });
+
+const avatarSchema = z
+    .object({
+        avatarUrl: z.string().url("Invalid URL format").optional(),
+        avatarFile: z
+            .any()
+            .refine((file) => !file || file.mimetype.startsWith("image/"), {
+                message: "File must be an image",
+            })
+            .optional(),
+    })
+    .refine((data) => data.avatarUrl || data.avatarFile, {
+        message: "Either avatarUrl or avatarFile must be provided",
+        path: ["avatar"],
+    });
+
+export const updateAccountDetailsSchema = z.object({
+    name: z.string().min(1, "Name cannot be empty").optional(),
+    ...avatarSchema.shape,
+});

@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cloudinary": "^2.7.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
@@ -28,9 +29,11 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.1",
     "morgan": "^1.10.1",
+    "multer": "^2.0.2",
     "nodemailer": "^7.0.9",
     "pino": "^10.0.0",
     "pino-pretty": "^13.1.2",
+    "streamifier": "^0.1.1",
     "zod": "^4.1.12"
   },
   "devDependencies": {
@@ -40,9 +43,11 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/mongoose": "^5.11.96",
     "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.0.0",
     "@types/node": "^24.7.2",
     "@types/nodemailer": "^7.0.2",
     "@types/pino": "^7.0.4",
+    "@types/streamifier": "^0.1.2",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3"
