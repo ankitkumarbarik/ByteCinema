@@ -7,6 +7,7 @@ import {
     uploadOnCloudinary,
     deleteFromCloudinary,
 } from "@services/cloudinary.service";
+import { logger } from "@utils/logger";
 
 export const createMovie = asyncHandler(async (req: Request, res: Response) => {
     const {
@@ -173,4 +174,24 @@ export const updateMovie = asyncHandler(async (req: Request, res: Response) => {
     return res
         .status(200)
         .json(new ApiResponse(200, movie, "movie updated successfully"));
+});
+
+export const deleteMovie = asyncHandler(async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    const movie = await Movie.findById(id);
+    if (!movie) throw new ApiError(404, "Movie not found");
+
+    if (movie.poster?.public_id) {
+        await deleteFromCloudinary(movie.poster.public_id);
+        logger.info(
+            `Deleted poster from Cloudinary: ${movie.poster.public_id}`
+        );
+    }
+
+    await Movie.findByIdAndDelete(id);
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, {}, "Movie deleted successfully"));
 });

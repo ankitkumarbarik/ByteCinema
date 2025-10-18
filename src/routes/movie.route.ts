@@ -6,6 +6,7 @@ import upload from "@middlewares/multer.middleware";
 import validateRequest from "@middlewares/validate.middleware";
 import {
     createMovieSchema,
+    deleteMovieSchema,
     getAllMoviesSchema,
     getSingleMovieSchema,
     updateMovieBodySchema,
@@ -13,6 +14,7 @@ import {
 } from "@schemas/movie.schema";
 import {
     createMovie,
+    deleteMovie,
     getAllMovies,
     getSingleMovie,
     updateMovie,
@@ -55,6 +57,15 @@ router
         validateRequest(updateMovieParamsSchema, "params"),
         validateRequest(updateMovieBodySchema, "body"),
         updateMovie
+    );
+
+router
+    .route("/:id")
+    .delete(
+        verifyAuthentication,
+        verifyAuthorization(ROLES.ADMIN),
+        validateRequest(deleteMovieSchema, "params"),
+        deleteMovie
     );
 
 export default router;

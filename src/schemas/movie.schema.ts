@@ -84,3 +84,11 @@ export const updateMovieBodySchema = z.object({
     trailerUrl: z.string().url("Invalid trailer URL").optional(),
     posterUrl: z.string().url("Invalid poster URL").optional(),
 });
+
+export const deleteMovieSchema = z.object({
+    id: z
+        .string()
+        .trim()
+        .nonempty("Movie ID is required")
+        .regex(/^[0-9a-fA-F]{24}$/, "Invalid MongoDB ObjectId format"),
+});
