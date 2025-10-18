@@ -69,3 +69,36 @@ export const createMovie = asyncHandler(async (req: Request, res: Response) => {
         .status(201)
         .json(new ApiResponse(201, movie, "movie created successfully"));
 });
+
+export const getAllMovies = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { genre, title, releaseYear, page = 1, limit = 10 } = req.query;
+
+        const query: any = {};
+
+        if (genre)
+            query.genre = { $in: Array.isArray(genre) ? genre : [genre] };
+        if (title) query.title = { $regex: String(title), $options: "i" };
+        if (releaseYear) query.releaseYear = Number(releaseYear);
+
+        const skip = (Number(page) - 1) * Number(limit);
+
+        const movies = await Movie.find(query)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(Number(limit))
+            .exec();
+
+        const total = await Movie.countDocuments(query);
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    { movies, total, page: Number(page), limit: Number(limit) },
+                    "movies fetched successfully"
+                )
+            );
+    }
+);

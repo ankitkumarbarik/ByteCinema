@@ -29,3 +29,14 @@ export const createMovieSchema = z.object({
     trailerUrl: z.string().url("Invalid trailer URL").optional(),
     posterUrl: z.string().url("Invalid poster URL").optional(),
 });
+
+export const getAllMoviesSchema = z.object({
+    genre: z.string().optional(),
+    title: z.string().optional(),
+    releaseYear: z
+        .string()
+        .regex(/^\d{4}$/, "releaseYear must be a 4-digit year")
+        .optional(),
+    page: z.string().regex(/^\d+$/, "page must be a number").optional(),
+    limit: z.string().regex(/^\d+$/, "limit must be a number").optional(),
+});
