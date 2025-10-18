@@ -2,8 +2,11 @@ import { Request, Response } from "express";
 import asyncHandler from "@utils/asyncHandler";
 import ApiError from "@utils/ApiError";
 import ApiResponse from "@utils/ApiResponse";
-import Movie, { IMovie } from "@models/movie.model";
-import { uploadOnCloudinary } from "@services/cloudinary.service";
+import Movie from "@models/movie.model";
+import {
+    uploadOnCloudinary,
+    deleteFromCloudinary,
+} from "@services/cloudinary.service";
 
 export const createMovie = asyncHandler(async (req: Request, res: Response) => {
     const {
@@ -102,3 +105,72 @@ export const getAllMovies = asyncHandler(
             );
     }
 );
+
+export const getSingleMovie = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { id } = req.params;
+
+        const movie = await Movie.findById(id);
+        if (!movie) throw new ApiError(404, "Movie not found");
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, movie, "movie fetched successfully"));
+    }
+);
+
+export const updateMovie = asyncHandler(async (req: Request, res: Response) => {
+    const movieId = req.params.id;
+    if (!movieId) throw new ApiError(400, "movie id is required");
+
+    const movie = await Movie.findById(movieId);
+    if (!movie) throw new ApiError(404, "movie not found");
+
+    const {
+        title,
+        description,
+        genre,
+        releaseYear,
+        duration,
+        cast,
+        director,
+        trailerUrl,
+        posterUrl,
+    } = req.body;
+
+    if (title) movie.title = title.trim();
+    if (description) movie.description = description.trim();
+    if (genre) movie.genre = Array.isArray(genre) ? genre : [genre];
+    if (releaseYear) movie.releaseYear = Number(releaseYear);
+    if (duration) movie.duration = Number(duration);
+    if (cast)
+        movie.cast = Array.isArray(cast)
+            ? cast
+            : cast.split(",").map((s: string) => s.trim());
+    if (director) movie.director = director.trim();
+    if (trailerUrl) movie.trailerUrl = trailerUrl.trim();
+
+    const posterFile = req.file;
+    if (posterFile || posterUrl) {
+        if (movie.poster?.public_id) {
+            await deleteFromCloudinary(movie.poster.public_id);
+        }
+
+        if (posterFile) {
+            const result: any = await uploadOnCloudinary(posterFile.buffer);
+            if (!result) throw new ApiError(500, "Failed to upload poster");
+            movie.poster = {
+                public_id: result.public_id,
+                url: result.secure_url,
+            };
+        } else if (posterUrl) {
+            movie.poster = { public_id: "", url: posterUrl.trim() };
+        }
+    }
+
+    await movie.save();
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, movie, "movie updated successfully"));
+});
