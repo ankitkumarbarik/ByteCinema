@@ -15,6 +15,7 @@ export interface IMovie extends Document {
     };
     averageRating?: number;
     totalReviews?: number;
+    createdBy: { type: Schema.Types.ObjectId; ref: "User"; required: true };
 }
 
 const movieSchema = new Schema<IMovie>(
@@ -68,6 +69,11 @@ const movieSchema = new Schema<IMovie>(
         totalReviews: {
             type: Number,
             default: 0,
+        },
+        createdBy: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
         },
     },
     { timestamps: true }

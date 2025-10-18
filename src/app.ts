@@ -23,9 +23,11 @@ app.get("/", (req: Request, res: Response) => {
 
 // routes import
 import userRouter from "@routes/user.route";
+import movieRouter from "@routes/movie.route";
 
 // routes define
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/movies", movieRouter);
 
 // global error handler - one last middleware
 app.use(errorMiddleware);

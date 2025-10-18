@@ -10,7 +10,7 @@ import {
     resetUserPasswordParamsSchema,
     updateAccountDetailsSchema,
     verifyOtpSignupSchema,
-} from "@schemas/user.validation";
+} from "@schemas/user.schema";
 import {
     changeCurrentPassword,
     deleteUser,
