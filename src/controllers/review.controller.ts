@@ -120,3 +120,32 @@ export const deleteReview = asyncHandler(
             .json(new ApiResponse(200, {}, "Review deleted successfully"));
     }
 );
+
+export const getAllReviews = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { movieId, page = 1, limit = 10 } = req.query;
+
+        const skip = (Number(page) - 1) * Number(limit);
+
+        const reviews = await Review.find({ movie: movieId })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(Number(limit))
+            .populate("user", "name email");
+
+        const total = await Review.countDocuments({ movie: movieId });
+
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                {
+                    reviews,
+                    total,
+                    page: Number(page),
+                    limit: Number(limit),
+                },
+                "Reviews fetched successfully"
+            )
+        );
+    }
+);

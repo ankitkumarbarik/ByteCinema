@@ -4,12 +4,14 @@ import validateRequest from "@middlewares/validate.middleware";
 import {
     createReviewSchema,
     deleteReviewSchema,
+    getAllReviewsSchema,
     updateReviewBodySchema,
     updateReviewParamsSchema,
 } from "@schemas/review.schema";
 import {
     createReview,
     deleteReview,
+    getAllReviews,
     updateReview,
 } from "@controllers/review.controller";
 
@@ -38,5 +40,7 @@ router.delete(
     validateRequest(deleteReviewSchema, "params"),
     deleteReview
 );
+
+router.get("/", validateRequest(getAllReviewsSchema, "query"), getAllReviews);
 
 export default router;

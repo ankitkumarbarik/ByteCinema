@@ -33,3 +33,9 @@ export const deleteReviewSchema = z.object({
         .nonempty("Review ID is required")
         .regex(/^[0-9a-fA-F]{24}$/, "Invalid Review ID format"),
 });
+
+export const getAllReviewsSchema = z.object({
+    movieId: z.string().nonempty("Movie ID is required"),
+    page: z.string().optional(),
+    limit: z.string().optional(),
+});
