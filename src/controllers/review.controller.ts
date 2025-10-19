@@ -149,3 +149,16 @@ export const getAllReviews = asyncHandler(
         );
     }
 );
+
+export const getSingleReview = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { id } = req.params;
+
+        const review = await Review.findById(id).populate("user", "name email");
+        if (!review) throw new ApiError(404, "Review not found");
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, review, "Review fetched successfully"));
+    }
+);

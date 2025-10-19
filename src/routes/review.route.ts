@@ -5,6 +5,7 @@ import {
     createReviewSchema,
     deleteReviewSchema,
     getAllReviewsSchema,
+    getSingleReviewSchema,
     updateReviewBodySchema,
     updateReviewParamsSchema,
 } from "@schemas/review.schema";
@@ -12,6 +13,7 @@ import {
     createReview,
     deleteReview,
     getAllReviews,
+    getSingleReview,
     updateReview,
 } from "@controllers/review.controller";
 
@@ -34,13 +36,20 @@ router
         updateReview
     );
 
-router.delete(
-    "/:id",
-    verifyAuthentication,
-    validateRequest(deleteReviewSchema, "params"),
-    deleteReview
-);
+router
+    .route("/:id")
+    .delete(
+        verifyAuthentication,
+        validateRequest(deleteReviewSchema, "params"),
+        deleteReview
+    );
 
-router.get("/", validateRequest(getAllReviewsSchema, "query"), getAllReviews);
+router
+    .route("/")
+    .get(validateRequest(getAllReviewsSchema, "query"), getAllReviews);
+
+router
+    .route("/:id")
+    .get(validateRequest(getSingleReviewSchema, "params"), getSingleReview);
 
 export default router;

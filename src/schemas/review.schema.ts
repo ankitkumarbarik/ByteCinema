@@ -39,3 +39,7 @@ export const getAllReviewsSchema = z.object({
     page: z.string().optional(),
     limit: z.string().optional(),
 });
+
+export const getSingleReviewSchema = z.object({
+    id: z.string().nonempty("Review ID is required"),
+});
