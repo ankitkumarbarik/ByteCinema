@@ -17,3 +17,12 @@ export const createReviewSchema = z.object({
         .max(500, "Comment cannot exceed 500 characters")
         .optional(),
 });
+
+export const updateReviewParamsSchema = z.object({
+    id: z.string().nonempty("Review ID is required"),
+});
+
+export const updateReviewBodySchema = z.object({
+    rating: z.number().min(0).max(5).optional(),
+    comment: z.string().min(1, "Comment cannot be empty").optional(),
+});

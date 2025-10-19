@@ -44,3 +44,31 @@ export const createReview = asyncHandler(
             .json(new ApiResponse(201, review, "review created successfully"));
     }
 );
+
+export const updateReview = asyncHandler(
+    async (req: Request, res: Response) => {
+        const reviewId = req.params.id;
+        const { rating, comment } = req.body;
+
+        const review = await Review.findById(reviewId);
+        if (!review) throw new ApiError(404, "Review not found");
+
+        const userId = req.user?._id;
+
+        // only review owner can update
+        if (review.user.toString() !== userId?.toString())
+            throw new ApiError(
+                403,
+                "Forbidden: Not allowed to update this review"
+            );
+
+        if (rating !== undefined) review.rating = Number(rating);
+        if (comment !== undefined) review.comment = comment.trim();
+
+        await review.save();
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, review, "Review updated successfully"));
+    }
+);
