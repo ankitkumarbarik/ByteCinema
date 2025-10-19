@@ -41,3 +41,7 @@ export const updateTheaterBodySchema = z.object({
     city: z.string().optional(),
     totalScreens: z.number().optional(),
 });
+
+export const deleteTheaterParamsSchema = z.object({
+    id: z.string().min(1, "Theater ID is required"),
+});

@@ -95,3 +95,18 @@ export const updateTheater = asyncHandler(
             );
     }
 );
+
+export const deleteTheater = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { id } = req.params;
+
+        const theater = await Theater.findById(id);
+        if (!theater) throw new ApiError(404, "Theater not found");
+
+        await Theater.findByIdAndDelete(id);
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, {}, "Theater deleted successfully"));
+    }
+);

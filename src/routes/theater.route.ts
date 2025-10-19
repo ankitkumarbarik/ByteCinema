@@ -5,12 +5,14 @@ import validateRequest from "@middlewares/validate.middleware";
 import { ROLES } from "@config/role";
 import {
     createTheater,
+    deleteTheater,
     getAllTheaters,
     getSingleTheater,
     updateTheater,
 } from "@controllers/theater.controller";
 import {
     createTheaterSchema,
+    deleteTheaterParamsSchema,
     getAllTheatersSchema,
     getSingleTheaterSchema,
     updateTheaterBodySchema,
@@ -46,6 +48,12 @@ router
         validateRequest(updateTheaterParamsSchema, "params"),
         validateRequest(updateTheaterBodySchema, "body"),
         updateTheater
+    )
+    .delete(
+        verifyAuthentication,
+        verifyAuthorization(ROLES.ADMIN),
+        validateRequest(deleteTheaterParamsSchema, "params"),
+        deleteTheater
     );
 
 export default router;
