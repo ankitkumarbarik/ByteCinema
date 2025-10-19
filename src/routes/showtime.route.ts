@@ -6,11 +6,14 @@ import {
     createShowtime,
     getAllShowtimes,
     getSingleShowtime,
+    updateShowtime,
 } from "@controllers/showtime.controller";
 import {
     createShowtimeSchema,
     getAllShowtimesSchema,
     getSingleShowtimeSchema,
+    updateShowtimeBodySchema,
+    updateShowtimeParamsSchema,
 } from "@schemas/showtime.schema";
 import { ROLES } from "@config/role";
 
@@ -30,11 +33,19 @@ router
         getAllShowtimes
     );
 
-router.get(
-    "/:id",
-    verifyAuthentication,
-    validateRequest(getSingleShowtimeSchema, "params"),
-    getSingleShowtime
-);
+router
+    .route("/:id")
+    .get(
+        verifyAuthentication,
+        validateRequest(getSingleShowtimeSchema, "params"),
+        getSingleShowtime
+    )
+    .patch(
+        verifyAuthentication,
+        verifyAuthorization("ADMIN"),
+        validateRequest(updateShowtimeParamsSchema, "params"),
+        validateRequest(updateShowtimeBodySchema, "body"),
+        updateShowtime
+    );
 
 export default router;

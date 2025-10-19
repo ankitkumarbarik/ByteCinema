@@ -100,3 +100,47 @@ export const getSingleShowtime = asyncHandler(
             );
     }
 );
+
+export const updateShowtime = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const { movieId, theaterId, date, time, price, totalSeats } = req.body;
+
+        const showtime = await Showtime.findById(id);
+        if (!showtime) throw new ApiError(404, "Showtime not found");
+
+        if (movieId) {
+            const movie = await Movie.findById(movieId);
+            if (!movie) throw new ApiError(404, "Movie not found");
+            showtime.movie = movieId;
+        }
+
+        if (theaterId) {
+            const theater = await Theater.findById(theaterId);
+            if (!theater) throw new ApiError(404, "Theater not found");
+            showtime.theater = theaterId;
+        }
+
+        if (date) showtime.date = date;
+        if (time) showtime.time = time;
+        if (price !== undefined) showtime.price = Number(price);
+        if (totalSeats !== undefined) {
+            const bookedSeats = showtime.totalSeats - showtime.availableSeats;
+            if (Number(totalSeats) < bookedSeats)
+                throw new ApiError(
+                    400,
+                    "Total seats cannot be less than already booked seats"
+                );
+            showtime.totalSeats = Number(totalSeats);
+            showtime.availableSeats = Number(totalSeats) - bookedSeats;
+        }
+
+        await showtime.save();
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(200, showtime, "Showtime updated successfully")
+            );
+    }
+);

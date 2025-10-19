@@ -20,3 +20,22 @@ export const getAllShowtimesSchema = z.object({
 export const getSingleShowtimeSchema = z.object({
     id: z.string().min(1, "Showtime ID is required"),
 });
+
+export const updateShowtimeParamsSchema = z.object({
+    id: z.string(),
+});
+
+export const updateShowtimeBodySchema = z.object({
+    movieId: z.string().optional(),
+    theaterId: z.string().optional(),
+    date: z.string().optional(),
+    time: z.string().optional(),
+    price: z.preprocess(
+        (val) => (val !== undefined ? Number(val) : undefined),
+        z.number().positive().optional()
+    ),
+    totalSeats: z.preprocess(
+        (val) => (val !== undefined ? Number(val) : undefined),
+        z.number().int().positive().optional()
+    ),
+});
