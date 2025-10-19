@@ -8,3 +8,11 @@ export const createShowtimeSchema = z.object({
     price: z.number().min(0, "Price must be >= 0"),
     totalSeats: z.number().int().min(1, "Total seats must be at least 1"),
 });
+
+export const getAllShowtimesSchema = z.object({
+    movieId: z.string().optional(),
+    theaterId: z.string().optional(),
+    date: z.string().optional(),
+    page: z.string().optional(),
+    limit: z.string().optional(),
+});

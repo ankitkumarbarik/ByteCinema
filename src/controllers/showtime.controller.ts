@@ -47,3 +47,38 @@ export const createShowtime = asyncHandler(
             );
     }
 );
+
+export const getAllShowtimes = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { movieId, theaterId, date, page = 1, limit = 10 } = req.query;
+
+        const query: any = {};
+        if (movieId) query.movie = movieId;
+        if (theaterId) query.theater = theaterId;
+        if (date) query.date = date;
+
+        const skip = (Number(page) - 1) * Number(limit);
+
+        const showtimes = await Showtime.find(query)
+            .populate("movie", "title")
+            .populate("theater", "name location")
+            .sort({ date: 1, time: 1 })
+            .skip(skip)
+            .limit(Number(limit));
+
+        const total = await Showtime.countDocuments(query);
+
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                {
+                    showtimes,
+                    total,
+                    page: Number(page),
+                    limit: Number(limit),
+                },
+                "Showtimes fetched successfully"
+            )
+        );
+    }
+);
