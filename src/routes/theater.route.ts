@@ -7,11 +7,14 @@ import {
     createTheater,
     getAllTheaters,
     getSingleTheater,
+    updateTheater,
 } from "@controllers/theater.controller";
 import {
     createTheaterSchema,
     getAllTheatersSchema,
     getSingleTheaterSchema,
+    updateTheaterBodySchema,
+    updateTheaterParamsSchema,
 } from "@schemas/theater.schema";
 
 const router = express.Router();
@@ -36,6 +39,13 @@ router
         verifyAuthentication,
         validateRequest(getSingleTheaterSchema, "params"),
         getSingleTheater
+    )
+    .patch(
+        verifyAuthentication,
+        verifyAuthorization(ROLES.ADMIN),
+        validateRequest(updateTheaterParamsSchema, "params"),
+        validateRequest(updateTheaterBodySchema, "body"),
+        updateTheater
     );
 
 export default router;

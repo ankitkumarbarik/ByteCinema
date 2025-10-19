@@ -71,3 +71,27 @@ export const getSingleTheater = asyncHandler(
             );
     }
 );
+
+export const updateTheater = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const { name, location, city, totalScreens } = req.body;
+
+        const theater = await Theater.findById(id);
+        if (!theater) throw new ApiError(404, "Theater not found");
+
+        if (name) theater.name = name.trim();
+        if (location) theater.location = location.trim();
+        if (city) theater.city = city.trim();
+        if (totalScreens !== undefined)
+            theater.totalScreens = Number(totalScreens);
+
+        await theater.save();
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(200, theater, "Theater updated successfully")
+            );
+    }
+);

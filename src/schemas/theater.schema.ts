@@ -30,3 +30,14 @@ export const getAllTheatersSchema = z.object({
 export const getSingleTheaterSchema = z.object({
     id: z.string().min(1, "Theater ID is required"),
 });
+
+export const updateTheaterParamsSchema = z.object({
+    id: z.string().min(1, "Theater ID is required"),
+});
+
+export const updateTheaterBodySchema = z.object({
+    name: z.string().optional(),
+    location: z.string().optional(),
+    city: z.string().optional(),
+    totalScreens: z.number().optional(),
+});
