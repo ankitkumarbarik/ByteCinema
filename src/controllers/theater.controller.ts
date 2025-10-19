@@ -57,79 +57,17 @@ export const getAllTheaters = asyncHandler(
     }
 );
 
-export const getTheaterById = asyncHandler(
-    async (req: Request, res: Response) => {
-        const { id } = req.params;
-        const theater = await Theater.findById(id).populate(
-            "owner",
-            "name email"
-        );
-
-        if (!theater) throw new ApiError(404, "Theater not found");
-
-        return res
-            .status(200)
-            .json(
-                new ApiResponse(
-                    200,
-                    theater,
-                    "Theater details fetched successfully"
-                )
-            );
-    }
-);
-
-export const updateTheater = asyncHandler(
-    async (req: Request, res: Response) => {
-        const { id } = req.params;
-        const updates = req.body;
-
-        const theater = await Theater.findById(id);
-        if (!theater) throw new ApiError(404, "Theater not found");
-
-        // Only admin or owner can update
-        if (
-            theater.owner?.toString() !== req.user?._id?.toString() &&
-            req.user?.role !== "ADMIN"
-        ) {
-            throw new ApiError(
-                403,
-                "Forbidden: You are not allowed to update this theater"
-            );
-        }
-
-        Object.assign(theater, updates);
-        await theater.save();
-
-        return res
-            .status(200)
-            .json(
-                new ApiResponse(200, theater, "Theater updated successfully")
-            );
-    }
-);
-
-export const deleteTheater = asyncHandler(
+export const getSingleTheater = asyncHandler(
     async (req: Request, res: Response) => {
         const { id } = req.params;
 
         const theater = await Theater.findById(id);
         if (!theater) throw new ApiError(404, "Theater not found");
 
-        if (
-            theater.owner?.toString() !== req.user?._id?.toString() &&
-            req.user?.role !== "ADMIN"
-        ) {
-            throw new ApiError(
-                403,
-                "Forbidden: You are not allowed to delete this theater"
-            );
-        }
-
-        await Theater.findByIdAndDelete(id);
-
         return res
             .status(200)
-            .json(new ApiResponse(200, {}, "Theater deleted successfully"));
+            .json(
+                new ApiResponse(200, theater, "Theater fetched successfully")
+            );
     }
 );

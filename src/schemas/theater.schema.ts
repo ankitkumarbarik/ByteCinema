@@ -26,3 +26,7 @@ export const getAllTheatersSchema = z.object({
     city: z.string().optional(),
     name: z.string().optional(),
 });
+
+export const getSingleTheaterSchema = z.object({
+    id: z.string().min(1, "Theater ID is required"),
+});
