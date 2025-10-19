@@ -82,3 +82,21 @@ export const getAllShowtimes = asyncHandler(
         );
     }
 );
+
+export const getSingleShowtime = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { id } = req.params;
+
+        const showtime = await Showtime.findById(id)
+            .populate("movie")
+            .populate("theater");
+
+        if (!showtime) throw new ApiError(404, "Showtime not found");
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(200, showtime, "Showtime fetched successfully")
+            );
+    }
+);

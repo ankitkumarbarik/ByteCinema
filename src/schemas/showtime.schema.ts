@@ -16,3 +16,7 @@ export const getAllShowtimesSchema = z.object({
     page: z.string().optional(),
     limit: z.string().optional(),
 });
+
+export const getSingleShowtimeSchema = z.object({
+    id: z.string().min(1, "Showtime ID is required"),
+});

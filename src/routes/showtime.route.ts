@@ -5,10 +5,12 @@ import validateRequest from "@middlewares/validate.middleware";
 import {
     createShowtime,
     getAllShowtimes,
+    getSingleShowtime,
 } from "@controllers/showtime.controller";
 import {
     createShowtimeSchema,
     getAllShowtimesSchema,
+    getSingleShowtimeSchema,
 } from "@schemas/showtime.schema";
 import { ROLES } from "@config/role";
 
@@ -27,5 +29,12 @@ router
         validateRequest(getAllShowtimesSchema, "query"),
         getAllShowtimes
     );
+
+router.get(
+    "/:id",
+    verifyAuthentication,
+    validateRequest(getSingleShowtimeSchema, "params"),
+    getSingleShowtime
+);
 
 export default router;
