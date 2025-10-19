@@ -72,3 +72,51 @@ export const updateReview = asyncHandler(
             .json(new ApiResponse(200, review, "Review updated successfully"));
     }
 );
+
+export const deleteReview = asyncHandler(
+    async (req: Request, res: Response) => {
+        const reviewId = req.params.id;
+
+        const review = await Review.findById(reviewId);
+        if (!review) throw new ApiError(404, "Review not found");
+
+        const userId = req.user?._id;
+        const userRole = req.user?.role;
+
+        // only owner or admin can delete
+        if (
+            review.user.toString() !== userId?.toString() &&
+            userRole !== "ADMIN"
+        ) {
+            throw new ApiError(
+                403,
+                "Forbidden: Not allowed to delete this review"
+            );
+        }
+
+        await Review.findByIdAndDelete(reviewId);
+
+        const movie = await Movie.findById(review.movie);
+        if (movie) {
+            const reviews = await Review.find({ movie: movie._id });
+
+            if (reviews.length > 0) {
+                const totalRating = reviews.reduce(
+                    (sum, r) => sum + r.rating,
+                    0
+                );
+                movie.averageRating = totalRating / reviews.length;
+                movie.totalReviews = reviews.length;
+            } else {
+                movie.averageRating = 0;
+                movie.totalReviews = 0;
+            }
+
+            await movie.save();
+        }
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, {}, "Review deleted successfully"));
+    }
+);

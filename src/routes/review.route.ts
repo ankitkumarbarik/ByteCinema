@@ -3,10 +3,15 @@ import verifyAuthentication from "@middlewares/authentication.middleware";
 import validateRequest from "@middlewares/validate.middleware";
 import {
     createReviewSchema,
+    deleteReviewSchema,
     updateReviewBodySchema,
     updateReviewParamsSchema,
 } from "@schemas/review.schema";
-import { createReview, updateReview } from "@controllers/review.controller";
+import {
+    createReview,
+    deleteReview,
+    updateReview,
+} from "@controllers/review.controller";
 
 const router = Router();
 
@@ -26,5 +31,12 @@ router
         validateRequest(updateReviewBodySchema, "body"),
         updateReview
     );
+
+router.delete(
+    "/:id",
+    verifyAuthentication,
+    validateRequest(deleteReviewSchema, "params"),
+    deleteReview
+);
 
 export default router;

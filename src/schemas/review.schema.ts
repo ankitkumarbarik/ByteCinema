@@ -26,3 +26,10 @@ export const updateReviewBodySchema = z.object({
     rating: z.number().min(0).max(5).optional(),
     comment: z.string().min(1, "Comment cannot be empty").optional(),
 });
+
+export const deleteReviewSchema = z.object({
+    id: z
+        .string()
+        .nonempty("Review ID is required")
+        .regex(/^[0-9a-fA-F]{24}$/, "Invalid Review ID format"),
+});
