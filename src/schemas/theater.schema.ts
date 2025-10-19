@@ -21,3 +21,8 @@ export const createTheaterSchema = z.object({
         .int()
         .positive("Total screens must be a positive number"),
 });
+
+export const getAllTheatersSchema = z.object({
+    city: z.string().optional(),
+    name: z.string().optional(),
+});

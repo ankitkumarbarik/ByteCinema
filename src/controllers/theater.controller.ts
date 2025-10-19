@@ -37,16 +37,22 @@ export const createTheater = asyncHandler(
 
 export const getAllTheaters = asyncHandler(
     async (req: Request, res: Response) => {
-        const theaters = await Theater.find().populate("owner", "name email");
+        const { city, name } = req.query;
+
+        const filter: any = {};
+        if (city) filter.city = { $regex: String(city), $options: "i" };
+        if (name) filter.name = { $regex: String(name), $options: "i" };
+
+        const theaters = await Theater.find(filter)
+            .sort({ createdAt: -1 })
+            .exec();
+
+        if (!theaters.length) throw new ApiError(404, "No theaters found");
 
         return res
             .status(200)
             .json(
-                new ApiResponse(
-                    200,
-                    theaters,
-                    "All theaters fetched successfully"
-                )
+                new ApiResponse(200, theaters, "Theaters fetched successfully")
             );
     }
 );
