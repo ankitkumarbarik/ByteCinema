@@ -25,7 +25,8 @@ router
         verifyAuthentication,
         validateRequest(createReviewSchema, "body"),
         createReview
-    );
+    )
+    .get(validateRequest(getAllReviewsSchema, "query"), getAllReviews);
 
 router
     .route("/:id")
@@ -34,22 +35,12 @@ router
         validateRequest(updateReviewParamsSchema, "params"),
         validateRequest(updateReviewBodySchema, "body"),
         updateReview
-    );
-
-router
-    .route("/:id")
+    )
     .delete(
         verifyAuthentication,
         validateRequest(deleteReviewSchema, "params"),
         deleteReview
-    );
-
-router
-    .route("/")
-    .get(validateRequest(getAllReviewsSchema, "query"), getAllReviews);
-
-router
-    .route("/:id")
+    )
     .get(validateRequest(getSingleReviewSchema, "params"), getSingleReview);
 
 export default router;

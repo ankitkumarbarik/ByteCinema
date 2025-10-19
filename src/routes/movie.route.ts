@@ -30,10 +30,7 @@ router
         upload.single("poster"),
         validateRequest(createMovieSchema, "body"),
         createMovie
-    );
-
-router
-    .route("/")
+    )
     .get(
         verifyAuthentication,
         validateRequest(getAllMoviesSchema, "query"),
@@ -46,10 +43,7 @@ router
         verifyAuthentication,
         validateRequest(getSingleMovieSchema, "params"),
         getSingleMovie
-    );
-
-router
-    .route("/:id")
+    )
     .patch(
         verifyAuthentication,
         verifyAuthorization(ROLES.ADMIN),
@@ -57,10 +51,7 @@ router
         validateRequest(updateMovieParamsSchema, "params"),
         validateRequest(updateMovieBodySchema, "body"),
         updateMovie
-    );
-
-router
-    .route("/:id")
+    )
     .delete(
         verifyAuthentication,
         verifyAuthorization(ROLES.ADMIN),
