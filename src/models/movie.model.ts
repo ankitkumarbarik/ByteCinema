@@ -6,6 +6,7 @@ export interface IMovie extends Document {
     genre: string[];
     releaseYear: number;
     duration: number;
+    language?: string;
     cast?: string[];
     director?: string;
     trailerUrl?: string;
@@ -41,6 +42,10 @@ const movieSchema = new Schema<IMovie>(
         duration: {
             type: Number,
             required: [true, "Duration is required"],
+        },
+        language: {
+            type: String,
+            default: "English",
         },
         cast: [
             {
@@ -80,4 +85,5 @@ const movieSchema = new Schema<IMovie>(
 );
 
 const Movie = model<IMovie>("Movie", movieSchema);
+
 export default Movie;

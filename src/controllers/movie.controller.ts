@@ -16,6 +16,7 @@ export const createMovie = asyncHandler(async (req: Request, res: Response) => {
         genre,
         releaseYear,
         duration,
+        language,
         director,
         cast,
         trailerUrl,
@@ -40,6 +41,7 @@ export const createMovie = asyncHandler(async (req: Request, res: Response) => {
         releaseYear: Number(releaseYear),
         duration: Number(duration),
         director: director ? String(director).trim() : undefined,
+        language: language ? String(language).trim() : undefined,
         cast: Array.isArray(cast)
             ? cast
             : cast
@@ -133,6 +135,7 @@ export const updateMovie = asyncHandler(async (req: Request, res: Response) => {
         genre,
         releaseYear,
         duration,
+        language,
         cast,
         director,
         trailerUrl,
@@ -144,6 +147,7 @@ export const updateMovie = asyncHandler(async (req: Request, res: Response) => {
     if (genre) movie.genre = Array.isArray(genre) ? genre : [genre];
     if (releaseYear) movie.releaseYear = Number(releaseYear);
     if (duration) movie.duration = Number(duration);
+    if (language) movie.language = language.trim();
     if (cast)
         movie.cast = Array.isArray(cast)
             ? cast

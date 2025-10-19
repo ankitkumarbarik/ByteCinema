@@ -10,12 +10,13 @@ export const createMovieSchema = z.object({
     releaseYear: z
         .number({ message: "Release year must be a number" })
         .int()
-        .min(1888, "Release year must be valid"), // First movie year
+        .min(1888, "Release year must be valid"),
     duration: z
         .number({ message: "Duration must be a number" })
         .int()
         .positive("Duration must be greater than 0"),
     director: z.string().trim().optional(),
+    language: z.string().trim().optional(),
     cast: z
         .union([z.array(z.string().nonempty()), z.string().nonempty()])
         .optional()
@@ -71,6 +72,7 @@ export const updateMovieBodySchema = z.object({
         .positive("Duration must be greater than 0")
         .optional(),
     director: z.string().trim().optional(),
+    language: z.string().trim().optional(),
     cast: z
         .union([z.array(z.string().nonempty()), z.string().nonempty()])
         .optional()
