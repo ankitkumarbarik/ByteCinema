@@ -144,3 +144,18 @@ export const updateShowtime = asyncHandler(
             );
     }
 );
+
+export const deleteShowtime = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { id } = req.params;
+
+        const showtime = await Showtime.findById(id);
+        if (!showtime) throw new ApiError(404, "Showtime not found");
+
+        await Showtime.findByIdAndDelete(id);
+
+        return res
+            .status(200)
+            .json(new ApiResponse(200, {}, "Showtime deleted successfully"));
+    }
+);

@@ -39,3 +39,7 @@ export const updateShowtimeBodySchema = z.object({
         z.number().int().positive().optional()
     ),
 });
+
+export const deleteShowtimeParamsSchema = z.object({
+    id: z.string(),
+});

@@ -4,12 +4,14 @@ import verifyAuthorization from "@middlewares/authorization.middleware";
 import validateRequest from "@middlewares/validate.middleware";
 import {
     createShowtime,
+    deleteShowtime,
     getAllShowtimes,
     getSingleShowtime,
     updateShowtime,
 } from "@controllers/showtime.controller";
 import {
     createShowtimeSchema,
+    deleteShowtimeParamsSchema,
     getAllShowtimesSchema,
     getSingleShowtimeSchema,
     updateShowtimeBodySchema,
@@ -46,6 +48,12 @@ router
         validateRequest(updateShowtimeParamsSchema, "params"),
         validateRequest(updateShowtimeBodySchema, "body"),
         updateShowtime
+    )
+    .delete(
+        verifyAuthentication,
+        verifyAuthorization("ADMIN"),
+        validateRequest(deleteShowtimeParamsSchema, "params"),
+        deleteShowtime
     );
 
 export default router;
