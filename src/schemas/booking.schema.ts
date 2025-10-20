@@ -11,3 +11,14 @@ export const createBookingSchema = z.object({
         })
         .min(1, "At least one seat must be booked"),
 });
+
+export const getAllBookingsSchema = z.object({
+    page: z
+        .string()
+        .optional()
+        .transform((val) => (val ? Number(val) : 1)),
+    limit: z
+        .string()
+        .optional()
+        .transform((val) => (val ? Number(val) : 10)),
+});

@@ -79,3 +79,37 @@ export const getUserBookings = asyncHandler(
             );
     }
 );
+
+export const getAllBookings = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { page = 1, limit = 10 } = req.query as {
+            page?: string;
+            limit?: string;
+        };
+
+        const skip = (Number(page) - 1) * Number(limit);
+
+        const bookings = await Booking.find()
+            .populate("user", "name email")
+            .populate("showtime", "movie theater date time price")
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(Number(limit))
+            .exec();
+
+        const total = await Booking.countDocuments();
+
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                {
+                    bookings,
+                    total,
+                    page: Number(page),
+                    limit: Number(limit),
+                },
+                "All bookings fetched successfully"
+            )
+        );
+    }
+);
