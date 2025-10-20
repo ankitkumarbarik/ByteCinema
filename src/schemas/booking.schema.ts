@@ -22,3 +22,7 @@ export const getAllBookingsSchema = z.object({
         .optional()
         .transform((val) => (val ? Number(val) : 10)),
 });
+
+export const cancelBookingSchema = z.object({
+    id: z.string().min(1, "Booking ID is required"),
+});

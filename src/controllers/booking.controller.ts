@@ -113,3 +113,39 @@ export const getAllBookings = asyncHandler(
         );
     }
 );
+
+export const cancelBooking = asyncHandler(
+    async (req: Request, res: Response) => {
+        const bookingId = req.params.id;
+        const userId = req.user?._id;
+        const userRole = req.user?.role;
+
+        const booking = await Booking.findById(bookingId);
+        if (!booking) throw new ApiError(404, "Booking not found");
+
+        if (
+            booking.user.toString() !== userId?.toString() &&
+            userRole !== "ADMIN"
+        ) {
+            throw new ApiError(
+                403,
+                "Forbidden: Not allowed to cancel this booking"
+            );
+        }
+
+        const showtime = await Showtime.findById(booking.showtime);
+        if (showtime) {
+            showtime.availableSeats += booking.seatsBooked.length;
+            await showtime.save();
+        }
+
+        booking.status = "cancelled";
+        await booking.save();
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(200, booking, "Booking cancelled successfully")
+            );
+    }
+);

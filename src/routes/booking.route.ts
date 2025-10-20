@@ -2,10 +2,12 @@ import { Router } from "express";
 import verifyAuthentication from "@middlewares/authentication.middleware";
 import validateRequest from "@middlewares/validate.middleware";
 import {
+    cancelBookingSchema,
     createBookingSchema,
     getAllBookingsSchema,
 } from "@schemas/booking.schema";
 import {
+    cancelBooking,
     createBooking,
     getAllBookings,
     getUserBookings,
@@ -31,6 +33,11 @@ router
 
 router.route("/me").get(verifyAuthentication, getUserBookings);
 
-router;
+router.patch(
+    "/:id",
+    verifyAuthentication,
+    validateRequest(cancelBookingSchema, "params"),
+    cancelBooking
+);
 
 export default router;
