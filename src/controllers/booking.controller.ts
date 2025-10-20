@@ -57,3 +57,25 @@ export const createBooking = asyncHandler(
             );
     }
 );
+
+export const getUserBookings = asyncHandler(
+    async (req: Request, res: Response) => {
+        const userId = req.user?._id;
+        if (!userId) throw new ApiError(401, "Unauthorized");
+
+        const bookings = await Booking.find({ user: userId })
+            .populate("showtime", "movie theater date time price")
+            .sort({ createdAt: -1 })
+            .exec();
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    bookings,
+                    "User bookings fetched successfully"
+                )
+            );
+    }
+);

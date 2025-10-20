@@ -2,7 +2,10 @@ import { Router } from "express";
 import verifyAuthentication from "@middlewares/authentication.middleware";
 import validateRequest from "@middlewares/validate.middleware";
 import { createBookingSchema } from "@schemas/booking.schema";
-import { createBooking } from "@controllers/booking.controller";
+import {
+    createBooking,
+    getUserBookings,
+} from "@controllers/booking.controller";
 
 const router = Router();
 
@@ -12,5 +15,7 @@ router.post(
     validateRequest(createBookingSchema, "body"),
     createBooking
 );
+
+router.get("/me", verifyAuthentication, getUserBookings);
 
 export default router;
