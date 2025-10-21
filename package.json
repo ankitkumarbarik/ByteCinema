@@ -34,6 +34,7 @@
     "pino": "^10.0.0",
     "pino-pretty": "^13.1.2",
     "streamifier": "^0.1.1",
+    "stripe": "^19.1.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
@@ -48,6 +49,7 @@
     "@types/nodemailer": "^7.0.2",
     "@types/pino": "^7.0.4",
     "@types/streamifier": "^0.1.2",
+    "@types/stripe": "^8.0.416",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3"

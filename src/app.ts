@@ -28,6 +28,7 @@ import reviewRouter from "@routes/review.route";
 import theaterRouter from "@routes/theater.route";
 import showtimeRouter from "@routes/showtime.route";
 import bookingRouter from "@routes/booking.route";
+import paymentRouter from "@routes/payment.route";
 
 // routes define
 app.use("/api/v1/users", userRouter);
@@ -36,6 +37,7 @@ app.use("/api/v1/reviews", reviewRouter);
 app.use("/api/v1/theaters", theaterRouter);
 app.use("/api/v1/showtimes", showtimeRouter);
 app.use("/api/v1/bookings", bookingRouter);
+app.use("/api/v1/payments", paymentRouter);
 
 // global error handler - one last middleware
 app.use(errorMiddleware);
